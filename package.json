@@ -1,9 +1,8 @@
 {
-  "main": "node_modules/expo/AppEntry.js",
   "scripts": {
-    "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "start": "react-native start",
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
     "web": "expo start --web",
     "eject": "expo eject",
     "build": "expo build:android"
@@ -15,16 +14,21 @@
     "@react-navigation/native-stack": "^6.1.0",
     "expo": "~42.0.1",
     "expo-speech": "~9.2.0",
+    "expo-splash-screen": "~0.11.2",
     "expo-status-bar": "~1.0.4",
+    "expo-updates": "~0.8.1",
     "react": "16.13.1",
     "react-dom": "16.13.1",
-    "react-native": "https://github.com/expo/react-native/archive/sdk-42.0.0.tar.gz",
+    "react-native": "~0.63.4",
+    "react-native-gesture-handler": "~1.10.2",
     "react-native-ico-material-design": "^3.3.1",
     "react-native-paper": "^4.9.2",
-    "react-native-safe-area-context": "^3.2.0",
+    "react-native-reanimated": "~2.2.0",
+    "react-native-safe-area-context": "3.2.0",
     "react-native-screens": "~3.4.0",
     "react-native-speech": "^0.1.2",
     "react-native-svg": "^12.1.1",
+    "react-native-unimodules": "~0.14.5",
     "react-native-vector-icons": "^8.1.0",
     "react-native-web": "~0.13.12",
     "yarm": "^0.4.0"
@@ -32,5 +36,7 @@
   "devDependencies": {
     "@babel/core": "^7.9.0"
   },
-  "private": true
+  "private": true,
+  "name": "proyectoAna",
+  "version": "1.0.0"
 }

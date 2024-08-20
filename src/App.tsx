@@ -1,12 +1,11 @@
-import './App.css'
-
+import "./App.css";
+import Session from "./utils/Session";
 function App() {
-
   return (
     <div className="w-full h-full">
-     <h1 className='text-center'>chat app</h1>
+      <Session />
     </div>
-  )
+  );
 }
 
-export default App
+export default App;

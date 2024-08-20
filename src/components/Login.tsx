@@ -1,13 +1,23 @@
 import { useDispatch } from "react-redux";
 import { login } from "../features/session/sessionSlice";
-import { v4 as uuid } from "uuid";
 import { FormEvent } from "react";
+
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { app } from "../utils/firebase";
+import { Dispatch } from "@reduxjs/toolkit";
+
 export default function Login() {
   const dispatch = useDispatch();
+
   const handlerLogin = (e: FormEvent) => {
     e.preventDefault();
-    const uid = uuid();
-    dispatch(login(uid));
+    const user: { [key: string]: string } = {};
+    e.currentTarget.childNodes.forEach((item) => {
+      if (item instanceof HTMLInputElement) {
+        user[item.name] = item.value;
+      }
+    });
+    loginAuth(user, dispatch);
   };
   return (
     <form
@@ -23,4 +33,16 @@ export default function Login() {
       </button>
     </form>
   );
+}
+
+function loginAuth(userData: { [key: string]: string }, dispatch: Dispatch) {
+  const auth = getAuth(app);
+
+  signInWithEmailAndPassword(auth, userData.name, userData.password)
+    .then((userCredentials) => {
+      dispatch(login(userCredentials.user.uid));
+    })
+    .catch((err) => {
+      console.error(err);
+    });
 }

@@ -1,5 +1,5 @@
 import "./App.css";
-import Session from "./utils/Session";
+import Session from "./components/Session";
 function App() {
   return (
     <div className="w-full h-full">

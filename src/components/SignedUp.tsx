@@ -2,20 +2,27 @@ import { useDispatch } from "react-redux";
 import { FormEvent } from "react";
 
 import FirebaseSessions from "../utils/FirebaseSessions";
+import FirebaseRealtimeDatabase from "../utils/FirebaseRealtimeDatabase";
+import { SignOutUserData } from "../types";
 
 export default function SignUp() {
   const dispatch = useDispatch();
   const sessions = new FirebaseSessions();
+  const users = new FirebaseRealtimeDatabase();
 
-  const handlerLogin = (e: FormEvent) => {
+  const handlerLogin = async (e: FormEvent) => {
     e.preventDefault();
-    const user: { [key: string]: string } = {};
+    const userData: { [key: string]: string } = {};
     e.currentTarget.childNodes.forEach((item) => {
       if (item instanceof HTMLInputElement) {
-        user[item.name] = item.value;
+        userData[item.name] = item.value;
       }
     });
-    sessions.login(user, dispatch);
+    const response = await sessions.signup(userData, dispatch);
+    if (typeof response === "string") {
+      userData["uid"] = response;
+      users.write(userData as SignOutUserData);
+    }
   };
   return (
     <form
@@ -23,9 +30,9 @@ export default function SignUp() {
       className="w-full h-full flex flex-col items-center justify-center [&>label]:text-center [&>input]:rounded [&>input]:bg-inherit [&>input]:border [&>input]:p-1 [&>input]:mb-4"
     >
       <label htmlFor="name">name</label>
-      <input type="text" />
-      <label htmlFor="email">email</label>
       <input name="name" type="text" />
+      <label htmlFor="email">email</label>
+      <input name="email" type="text" />
       <label htmlFor="password">password</label>
       <input name="password" type="password" />
       <button className="py-1 px-5 mt-3 border border-white rounded">

@@ -2,11 +2,11 @@ import {
   Database,
   getDatabase,
   onValue,
+  push,
   ref,
   set,
-  update,
 } from "firebase/database";
-import { Messages, SignOutUserData } from "../types";
+import { MessagesStored, SignOutUserData } from "../types";
 
 export default class FirebaseRealtimeDatabase {
   database: Database;
@@ -15,21 +15,21 @@ export default class FirebaseRealtimeDatabase {
     this.database = getDatabase();
   }
 
-  write(data: SignOutUserData | null, message: Messages | null) {
+  write(data: SignOutUserData | null, message: MessagesStored | null) {
     const timestamp = Date.now().toString();
     if (message) {
-      update(
-        ref(this.database, `users/${message.from}/messages/${message.to}`),
-        {
-          [timestamp]: message.message,
-        }
-      );
-      update(
-        ref(this.database, `users/${message.to}/messages/${message.from}`),
-        {
-          [timestamp]: message.message,
-        }
-      );
+      // my messages store
+      push(ref(this.database, `users/${message.from}/messages/${message.to}`), {
+        message: message.message,
+        timestamp,
+        uid: message.from,
+      });
+      // friend message store
+      push(ref(this.database, `users/${message.to}/messages/${message.from}`), {
+        message: message.message,
+        timestamp,
+        uid: message.from,
+      });
 
       return;
     }
@@ -44,13 +44,9 @@ export default class FirebaseRealtimeDatabase {
     const reference = ref(this.database, !url ? "/users" : "/users/" + url);
     const dbData = onValue(reference, (snapshot) => {
       const data = snapshot.val();
-      if (url) {
-        const res = Object.values(data) as T[];
-        callback(res);
-      } else {
-        const res = Object.values(data) as T[];
-        callback(res);
-      }
+      const res = Object.values(data) as T[];
+      callback(res);
+      // }
     });
     return dbData;
   }

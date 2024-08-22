@@ -12,7 +12,13 @@ export type UserData = {
   password?: string;
 };
 
-export type Messages = {
+export type MessageRetrieve = {
+  message: string;
+  timestamp: string;
+  uid: string;
+};
+
+export type MessagesStored = {
   from: string;
   to: string;
   message: string;

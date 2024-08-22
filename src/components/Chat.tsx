@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { RootState } from "../utils/store";
 import FirebaseRealtimeDatabase from "../utils/FirebaseRealtimeDatabase";
 import { useLocation } from "wouter";
+import { MessageRetrieve } from "../types";
 export default function Home() {
   const uid = useSelector((state: RootState) => state.session.uid);
   const uidTo = useSelector((state: RootState) => state.uidTo.uid);
@@ -10,14 +11,13 @@ export default function Home() {
 
   const messageDB = new FirebaseRealtimeDatabase();
 
-  const [messages, setMessages] = useState<string[]>();
+  const [messages, setMessages] = useState<MessageRetrieve[]>();
   const messageRef = useRef<HTMLInputElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // get database messages
     const getMessages = messageDB.read(setMessages, `${uid}/messages/${uidTo}`);
-
     return () => getMessages();
   }, []);
 
@@ -43,6 +43,8 @@ export default function Home() {
     });
   }, [messages]);
 
+  console.log(messages);
+
   return (
     <>
       {!uid || !uidTo ? (
@@ -57,12 +59,19 @@ export default function Home() {
               {messages &&
                 messages.map((item, index) => {
                   return (
-                    <span
-                      key={index}
-                      className="border p-[2px] px-3 m-1 rounded-md text-center"
+                    <div
+                      className={`w-full flex items-center ${
+                        item.uid === uid ? " justify-end" : " justify-start"
+                      }
+                    `}
                     >
-                      {item}
-                    </span>
+                      <span
+                        key={index}
+                        className={`border p-[2px] px-3 m-1 rounded-md text-center`}
+                      >
+                        {item.message}
+                      </span>
+                    </div>
                   );
                 })}
             </div>

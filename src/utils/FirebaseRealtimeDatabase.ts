@@ -15,16 +15,6 @@ export default class FirebaseRealtimeDatabase {
     });
   }
 
-  /*   read(): Promise<UserData[]> {
-    return new Promise((resolve) => {
-      const reference = ref(this.database, "/users");
-      onValue(reference, async (snapshot) => {
-        const data = await snapshot.val();
-        const res = Object.values(data) as UserData[];
-        resolve(res);
-      });
-    });
-  } */
   read(callback: (e: UserData[]) => void) {
     const reference = ref(this.database, "/users");
     const dbData = onValue(reference, async (snapshot) => {

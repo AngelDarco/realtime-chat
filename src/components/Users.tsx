@@ -1,14 +1,18 @@
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import FirebaseRealtimeDatabase from "../utils/FirebaseRealtimeDatabase";
 import FirebaseSessions from "../utils/FirebaseSessions";
-import { Link } from "wouter";
+import { Link, Route, useLocation } from "wouter";
 import { useEffect, useState } from "react";
 import { UserData } from "../types";
+import Chat from "./Chat";
+import { RootState } from "../utils/store";
 export default function Users() {
   const database = new FirebaseRealtimeDatabase();
   const sessions = new FirebaseSessions();
   const dispatch = useDispatch();
+  const uid = useSelector((state: RootState) => state.session.uid);
 
+  const [location, navigate] = useLocation();
   const [usersData, setUsersData] = useState<UserData[]>();
 
   useEffect(() => {
@@ -20,31 +24,46 @@ export default function Users() {
     sessions.logout(dispatch);
   };
 
-  const handlerChatroom = () => {};
+  const handlerChatroom = () => {
+    navigate("/chat");
+  };
 
   return (
-    <div className="w-full h-full">
-      <Link
-        className="px-3 py-1 border rounded-lg absolute top-1 left-2"
-        href="/"
-        onClick={handlerLogout}
-      >
-        logout
-      </Link>
-      <div className="w-full h-full flex flex-col justify-end items-end">
-        {usersData &&
-          usersData.map((item, index) => {
-            return (
-              <span
-                onClick={handlerChatroom}
-                key={index}
-                className="px-4 py-1 m-1 border rounded-lg"
-              >
-                {item.username}
-              </span>
-            );
-          })}
-      </div>
-    </div>
+    <>
+      {!uid ? (
+        <></>
+      ) : (
+        <div className="w-full h-full relative">
+          <ul className="flex w-full [&>a]:px-3 [&>a]:py-1 border-b absolute top-0">
+            <Link href="/" onClick={handlerLogout}>
+              logout
+            </Link>
+            {location === "/chat" && <Link href="/users">home</Link>}
+          </ul>
+          <div
+            className={`${
+              location !== "/users" ? "hidden" : "flex"
+            } w-full h-full flex-col justify-end items-end`}
+          >
+            {usersData &&
+              usersData.map((item, index) => {
+                return (
+                  <Link key={index} href="/chat">
+                    <span
+                      key={index}
+                      onClick={handlerChatroom}
+                      className="px-4 py-1 m-1 border rounded-lg"
+                    >
+                      {item.username}
+                    </span>
+                  </Link>
+                );
+              })}
+          </div>
+          <Route path={"/chat"} component={Chat} />
+          {/* <Route path={"/users"} component={Users} /> */}
+        </div>
+      )}
+    </>
   );
 }

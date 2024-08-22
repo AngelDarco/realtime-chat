@@ -1,5 +1,5 @@
 import { Database, getDatabase, onValue, ref, set } from "firebase/database";
-import { SignOutUserData } from "../types";
+import { SignOutUserData, UserData } from "../types";
 
 export default class FirebaseRealtimeDatabase {
   database: Database;
@@ -15,11 +15,23 @@ export default class FirebaseRealtimeDatabase {
     });
   }
 
-  read() {
-    const reference = ref(this.database, "/users");
-    onValue(reference, (snapshot) => {
-      const data = snapshot.val();
-      console.log(data);
+  /*   read(): Promise<UserData[]> {
+    return new Promise((resolve) => {
+      const reference = ref(this.database, "/users");
+      onValue(reference, async (snapshot) => {
+        const data = await snapshot.val();
+        const res = Object.values(data) as UserData[];
+        resolve(res);
+      });
     });
+  } */
+  read(callback: (e: UserData[]) => void) {
+    const reference = ref(this.database, "/users");
+    const dbData = onValue(reference, async (snapshot) => {
+      const data = await snapshot.val();
+      const res = Object.values(data) as UserData[];
+      callback(res);
+    });
+    return dbData;
   }
 }

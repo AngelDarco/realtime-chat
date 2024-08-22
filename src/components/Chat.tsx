@@ -1,10 +1,14 @@
 import { useSelector } from "react-redux";
 import { useEffect, useRef, useState } from "react";
 import { RootState } from "../utils/store";
+import FirebaseRealtimeDatabase from "../utils/FirebaseRealtimeDatabase";
 export default function Home() {
   const uid = useSelector((state: RootState) => state.session.uid);
+  const uidTo = useSelector((state: RootState) => state.uidTo.uid);
 
-  const [messages, setMessages] = useState(["done"]);
+  const messageDB = new FirebaseRealtimeDatabase();
+
+  const [messages, setMessages] = useState(["not done yet"]);
   const messageRef = useRef<HTMLInputElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
 
@@ -12,6 +16,12 @@ export default function Home() {
     if (!messageRef.current) return;
     const message = messageRef.current.value;
     setMessages((item) => [...item, message]);
+    if (uid)
+      messageDB.write(null, {
+        message,
+        from: uid,
+        to: uidTo,
+      });
   };
 
   useEffect(() => {
@@ -55,12 +65,6 @@ export default function Home() {
               </button>
             </div>
           </div>
-          {/* <button
-            onClick={handlerLogout}
-            className="fixed top-3 left-3 p-1 border border-white rounded"
-          >
-            logout
-          </button> */}
         </div>
       )}
     </>

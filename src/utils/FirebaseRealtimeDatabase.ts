@@ -1,5 +1,5 @@
 import { Database, getDatabase, onValue, ref, set } from "firebase/database";
-import { SignOutUserData, UserData } from "../types";
+import { Messages, SignOutUserData, UserData } from "../types";
 
 export default class FirebaseRealtimeDatabase {
   database: Database;
@@ -8,11 +8,22 @@ export default class FirebaseRealtimeDatabase {
     this.database = getDatabase();
   }
 
-  write(data: SignOutUserData) {
-    set(ref(this.database, "users/" + data.uid), {
-      username: data.name,
-      uid: data.uid,
-    });
+  write(data: SignOutUserData | null, message: Messages | null) {
+    if (message) {
+      set(ref(this.database, `users/${message.from}/messages/${message.to}`), {
+        messages: message.message,
+      });
+      set(ref(this.database, `users/${message.to}/messages/${message.from}`), {
+        messages: message.message,
+      });
+
+      return;
+    }
+    if (data)
+      set(ref(this.database, "users/" + data.uid), {
+        username: data.name,
+        uid: data.uid,
+      });
   }
 
   read(callback: (e: UserData[]) => void) {

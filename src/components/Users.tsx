@@ -6,10 +6,14 @@ import { useEffect, useState } from "react";
 import { UserData } from "../types";
 import Chat from "./Chat";
 import { RootState } from "../utils/store";
+
+import { uidTo } from "../features/uids/uuidToSlice";
+
 export default function Users() {
   const database = new FirebaseRealtimeDatabase();
   const sessions = new FirebaseSessions();
   const dispatch = useDispatch();
+
   const uid = useSelector((state: RootState) => state.session.uid);
 
   const [location, navigate] = useLocation();
@@ -24,8 +28,9 @@ export default function Users() {
     sessions.logout(dispatch);
   };
 
-  const handlerChatroom = () => {
+  const handlerChatroom = (uid: string) => {
     navigate("/chat");
+    dispatch(uidTo(uid));
   };
 
   return (
@@ -48,20 +53,17 @@ export default function Users() {
             {usersData &&
               usersData.map((item, index) => {
                 return (
-                  <Link key={index} href="/chat">
-                    <span
-                      key={index}
-                      onClick={handlerChatroom}
-                      className="px-4 py-1 m-1 border rounded-lg"
-                    >
-                      {item.username}
-                    </span>
-                  </Link>
+                  <span
+                    key={index}
+                    onClick={() => handlerChatroom(item.uid)}
+                    className="px-4 py-1 m-1 border rounded-lg"
+                  >
+                    {item.username}
+                  </span>
                 );
               })}
           </div>
           <Route path={"/chat"} component={Chat} />
-          {/* <Route path={"/users"} component={Users} /> */}
         </div>
       )}
     </>

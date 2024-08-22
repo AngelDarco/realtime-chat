@@ -33,6 +33,10 @@ export default function Users() {
     dispatch(uidTo(uid));
   };
 
+  const handlerCleanLinks = () => {
+    dispatch(uidTo(""));
+  };
+
   return (
     <>
       {!uid ? (
@@ -43,7 +47,11 @@ export default function Users() {
             <Link href="/" onClick={handlerLogout}>
               logout
             </Link>
-            {location === "/chat" && <Link href="/users">home</Link>}
+            {location === "/chat" && (
+              <Link onClick={handlerCleanLinks} href="/users">
+                home
+              </Link>
+            )}
           </ul>
           <div
             className={`${

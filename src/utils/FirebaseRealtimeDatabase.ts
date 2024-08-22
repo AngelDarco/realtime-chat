@@ -1,5 +1,12 @@
-import { Database, getDatabase, onValue, ref, set } from "firebase/database";
-import { Messages, SignOutUserData, UserData } from "../types";
+import {
+  Database,
+  getDatabase,
+  onValue,
+  ref,
+  set,
+  update,
+} from "firebase/database";
+import { Messages, SignOutUserData } from "../types";
 
 export default class FirebaseRealtimeDatabase {
   database: Database;
@@ -9,13 +16,20 @@ export default class FirebaseRealtimeDatabase {
   }
 
   write(data: SignOutUserData | null, message: Messages | null) {
+    const timestamp = Date.now().toString();
     if (message) {
-      set(ref(this.database, `users/${message.from}/messages/${message.to}`), {
-        messages: message.message,
-      });
-      set(ref(this.database, `users/${message.to}/messages/${message.from}`), {
-        messages: message.message,
-      });
+      update(
+        ref(this.database, `users/${message.from}/messages/${message.to}`),
+        {
+          [timestamp]: message.message,
+        }
+      );
+      update(
+        ref(this.database, `users/${message.to}/messages/${message.from}`),
+        {
+          [timestamp]: message.message,
+        }
+      );
 
       return;
     }
@@ -26,12 +40,17 @@ export default class FirebaseRealtimeDatabase {
       });
   }
 
-  read(callback: (e: UserData[]) => void) {
-    const reference = ref(this.database, "/users");
-    const dbData = onValue(reference, async (snapshot) => {
-      const data = await snapshot.val();
-      const res = Object.values(data) as UserData[];
-      callback(res);
+  read<T>(callback: (e: T[]) => void, url?: string | null) {
+    const reference = ref(this.database, !url ? "/users" : "/users/" + url);
+    const dbData = onValue(reference, (snapshot) => {
+      const data = snapshot.val();
+      if (url) {
+        const res = Object.values(data) as T[];
+        callback(res);
+      } else {
+        const res = Object.values(data) as T[];
+        callback(res);
+      }
     });
     return dbData;
   }

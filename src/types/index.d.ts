@@ -11,3 +11,9 @@ export type UserData = {
   email?: string;
   password?: string;
 };
+
+export type Messages = {
+  from: string;
+  to: string;
+  message: string;
+};

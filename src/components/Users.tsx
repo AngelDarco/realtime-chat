@@ -20,7 +20,7 @@ export default function Users() {
   const [usersData, setUsersData] = useState<UserData[]>();
 
   useEffect(() => {
-    const realtimeData = database.read(setUsersData);
+    const realtimeData = database.read(setUsersData, null);
     return () => realtimeData();
   }, []);
 

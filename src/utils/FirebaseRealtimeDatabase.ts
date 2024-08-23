@@ -18,14 +18,19 @@ export default class FirebaseRealtimeDatabase {
   write(data: SignOutUserData | null, message: MessagesStored | null) {
     const timestamp = Date.now().toString();
     if (message) {
+      // `messages/${message.from}/${message.to}`
       // my messages store
-      push(ref(this.database, `users/${message.from}/messages/${message.to}`), {
+      // push(ref(this.database, `users/${message.from}/messages/${message.to}`), {
+      push(ref(this.database, `messages/${message.from}/${message.to}`), {
         message: message.message,
         timestamp,
         uid: message.from,
       });
+
+      // `messages/${message.to}/${message.from}`
       // friend message store
-      push(ref(this.database, `users/${message.to}/messages/${message.from}`), {
+      // push(ref(this.database, `users/${message.to}/messages/${message.from}`), {
+      push(ref(this.database, `messages/${message.to}/${message.from}`), {
         message: message.message,
         timestamp,
         uid: message.from,
@@ -40,13 +45,15 @@ export default class FirebaseRealtimeDatabase {
       });
   }
 
-  read<T>(callback: (e: T[]) => void, url?: string | null) {
-    const reference = ref(this.database, !url ? "/users" : "/users/" + url);
+  read<T>(callback: (e: T[]) => void, messageDB: string | null) {
+    const users = `users/`;
+    const messages = `messages/${messageDB}`;
+
+    const reference = ref(this.database, messageDB ? messages : users);
     const dbData = onValue(reference, (snapshot) => {
       const data = snapshot.val();
       const res = Object.values(data) as T[];
       callback(res);
-      // }
     });
     return dbData;
   }

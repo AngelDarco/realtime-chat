@@ -10,7 +10,7 @@ export default function Home() {
   const [location, navigate] = useLocation();
 
   useEffect(() => {
-    if (location === "/users") navigate("/users", { replace: true });
+    if (location === "/users" || uid) navigate("/users", { replace: true });
   }, [uid, location]);
 
   return (

@@ -33,6 +33,7 @@ export default function Users() {
     dispatch(uidTo(uid));
   };
 
+  // logout and clean the uidTo
   const handlerCleanLinks = () => {
     dispatch(uidTo(""));
   };

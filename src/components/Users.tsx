@@ -19,21 +19,24 @@ export default function Users() {
   const [location, navigate] = useLocation();
   const [usersData, setUsersData] = useState<UserData[]>();
 
+  // get the register users from the database
   useEffect(() => {
     const realtimeData = database.read(setUsersData, null);
     return () => realtimeData();
   }, []);
 
+  // logout and clean the uid
   const handlerLogout = () => {
     sessions.logout(dispatch);
   };
 
+  // get the uid from the selected user, and go to the chat
   const handlerChatroom = (uid: string) => {
     navigate("/chat");
     dispatch(uidTo(uid));
   };
 
-  // logout and clean the uidTo
+  // clean up the uidTo state
   const handlerCleanLinks = () => {
     dispatch(uidTo(""));
   };
@@ -44,7 +47,12 @@ export default function Users() {
         <></>
       ) : (
         <div className="w-full h-full relative">
-          <ul className="flex w-full [&>a]:px-3 [&>a]:py-1 border-b absolute top-0">
+          <ul
+            className="glass absolute top-0 flex w-full px-4 py-2 border-b 
+          [&>a]:border-b-2 [&>a]:rounded-2xl [&>a]:hover:rounded-2xl
+          [&>a]:hover:font-serif
+          [&>a]:py-1 [&>a]:px-3 [&>a]:hover:glass [&>a]:hover:animate-wiggle [&>a]:hover:animate-duration-[500ms] "
+          >
             <Link href="/" onClick={handlerLogout}>
               logout
             </Link>

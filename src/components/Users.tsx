@@ -19,6 +19,11 @@ export default function Users() {
   const [location, navigate] = useLocation();
   const [usersData, setUsersData] = useState<UserData[]>();
 
+  // navigate to home if the uid is not found
+  useEffect(() => {
+    if (!uid) navigate("/");
+  }, [uid, location]);
+
   // get the register users from the database
   useEffect(() => {
     const realtimeData = database.read(setUsersData, null);
@@ -28,6 +33,7 @@ export default function Users() {
   // logout and clean the uid
   const handlerLogout = () => {
     sessions.logout(dispatch);
+    navigate("/");
   };
 
   // get the uid from the selected user, and go to the chat
@@ -46,12 +52,12 @@ export default function Users() {
       {!uid ? (
         <></>
       ) : (
-        <div className="w-full h-full relative">
+        <div className="w-full h-full pt-12 relative flex flex-col">
           <ul
-            className="glass absolute top-0 flex w-full px-4 py-2 border-b 
-          [&>a]:border-b-2 [&>a]:rounded-2xl [&>a]:hover:rounded-2xl
-          [&>a]:hover:font-serif
-          [&>a]:py-1 [&>a]:px-3 [&>a]:hover:glass [&>a]:hover:animate-wiggle [&>a]:hover:animate-duration-[500ms] "
+            className="glass absolute top-0 flex w-full px-4 py-2 border-b gap-2 border-none
+          [&>a]:border-b-2 [&>a]:rounded-2xl hover:[&>a]:rounded-2xl
+          hover:[&>a]:font-serif
+          [&>a]:py-1 [&>a]:px-3 hover:[&>a]:glass hover:[&>a]:animate-wiggle hover:[&>a]:animate-duration-[500ms]"
           >
             <Link href="/" onClick={handlerLogout}>
               logout
@@ -62,21 +68,33 @@ export default function Users() {
               </Link>
             )}
           </ul>
+          <div className={`${location !== "/users" ? "hidden" : ""} pt-5`}>
+            <h1 className="text-3xl font-bold text-center">Users</h1>
+            <h2 className="text-sm font-bold px-8">start a new chat</h2>
+          </div>
           <div
-            className={`${
-              location !== "/users" ? "hidden" : "flex"
-            } w-full h-full flex-col justify-end items-end`}
+            className={`${location !== "/users" ? "hidden" : "flex"} 
+            w-full h-full flex-col justify-center items-center p-3 overflow-y-scroll no-scrollbar `}
           >
             {usersData &&
               usersData.map((item, index) => {
                 return (
-                  <span
+                  <div
                     key={index}
                     onClick={() => handlerChatroom(item.uid)}
-                    className="px-4 py-1 m-1 border rounded-lg"
+                    className="glass w-full h-24 my-2 flex items-center justify-center flex-col rounded cursor-pointer"
                   >
-                    {item.username}
-                  </span>
+                    <img
+                      className="w-12 h-12 rounded-full"
+                      src={`${
+                        item.image
+                          ? item.image
+                          : "https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                      }`}
+                      alt={`${item.username}-icon`}
+                    />
+                    <span className="px-4 m-1">{item.username}</span>
+                  </div>
                 );
               })}
           </div>

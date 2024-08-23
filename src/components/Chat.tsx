@@ -15,15 +15,29 @@ export default function Home() {
   const messageRef = useRef<HTMLInputElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
 
+  // get database messages
   useEffect(() => {
-    // get database messages
-    const getMessages = messageDB.read(setMessages, `${uid}/messages/${uidTo}`);
+    const getMessages = messageDB.read(setMessages, `${uid}/${uidTo}`);
     return () => getMessages();
   }, []);
 
+  // activate the enter key to send messages
+  useEffect(() => {
+    if (!messageRef.current || messageRef.current.value.trim() === "") return;
+
+    messageRef.current.addEventListener("keyup", (e: KeyboardEvent) => {
+      if (e.key === "Enter") {
+        handlerSendMessages();
+      }
+    });
+    return () => messageRef.current?.removeEventListener("keyup", () => {});
+  }, []);
+
+  // send the messages
   const handlerSendMessages = () => {
     if (!messageRef.current) return;
     const message = messageRef.current.value;
+    if (message.trim() === "") return;
 
     // write messages in the database
     if (uid)
@@ -32,8 +46,12 @@ export default function Home() {
         from: uid,
         to: uidTo,
       });
+
+    // clear input
+    messageRef.current.value = "";
   };
 
+  // scroll to the last message
   useEffect(() => {
     if (!uid || !uidTo) navigate("/users");
     if (!messagesContainerRef.current?.lastElementChild) return;
@@ -42,8 +60,6 @@ export default function Home() {
       block: "start",
     });
   }, [messages]);
-
-  console.log(messages);
 
   return (
     <>
@@ -60,13 +76,13 @@ export default function Home() {
                 messages.map((item, index) => {
                   return (
                     <div
+                      key={index}
                       className={`w-full flex items-center ${
                         item.uid === uid ? " justify-end" : " justify-start"
                       }
                     `}
                     >
                       <span
-                        key={index}
                         className={`border p-[2px] px-3 m-1 rounded-md text-center`}
                       >
                         {item.message}

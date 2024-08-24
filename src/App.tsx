@@ -1,9 +1,9 @@
 import "./App.css";
-import Session from "./utils/Session";
+import Home from "./components/Home";
 function App() {
   return (
     <div className="w-full h-full">
-      <Session />
+      <Home />
     </div>
   );
 }

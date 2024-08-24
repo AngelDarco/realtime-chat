@@ -29,15 +29,14 @@ export default function Home() {
 
   // activate the enter key to send messages
   useEffect(() => {
-    if (!messageRef.current || messageRef.current.value.trim() === "") return;
-
+    if (!messageRef.current) return;
     messageRef.current.addEventListener("keyup", (e: KeyboardEvent) => {
       if (e.key === "Enter") {
-        handlerSendMessages();
+        if (messageRef.current?.value.trim() !== "") handlerSendMessages();
       }
     });
-    // return () => messageRef.current?.removeEventListener("keyup", () => {});
-  }, []);
+    return () => messageRef.current?.removeEventListener("keyup", () => {});
+  }, [messageRef.current?.value]);
 
   // send the messages
   const handlerSendMessages = () => {
@@ -62,7 +61,7 @@ export default function Home() {
     if (!uid || !uidTo) navigate("/users");
     if (!messagesContainerRef.current?.lastElementChild) return;
     messagesContainerRef.current.lastElementChild.scrollIntoView({
-      behavior: "smooth",
+      behavior: "instant",
       block: "start",
     });
   }, [messages]);
@@ -110,7 +109,7 @@ export default function Home() {
           <div className="glass w-full flex">
             <input
               ref={messageRef}
-              className="w-full outline-none text-indigo-700 p-1 px-2 bg-inherit border-[1px] hover:bottom-2"
+              className="w-full outline-none text-indigo-700  p-2 bg-inherit border-[1px] hover:bottom-2"
               type="text"
             />
             <button

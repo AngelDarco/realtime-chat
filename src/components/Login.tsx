@@ -2,10 +2,12 @@ import { useDispatch } from "react-redux";
 import { FormEvent } from "react";
 
 import FirebaseSessions from "../utils/FirebaseSessions";
+import { useLocation } from "wouter";
 
 export default function Login() {
   const dispatch = useDispatch();
   const sessions = new FirebaseSessions();
+  const [, navigate] = useLocation();
 
   const handlerLogin = (e: FormEvent) => {
     e.preventDefault();
@@ -16,7 +18,9 @@ export default function Login() {
       }
     });
     sessions.login(user, dispatch);
+    navigate("/users");
   };
+
   return (
     <form
       onSubmit={handlerLogin}

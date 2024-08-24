@@ -1,5 +1,12 @@
-import { Database, getDatabase, onValue, ref, set } from "firebase/database";
-import { SignOutUserData } from "../types";
+import {
+  Database,
+  getDatabase,
+  onValue,
+  push,
+  ref,
+  set,
+} from "firebase/database";
+import { MessagesStored, SignOutUserData } from "../types";
 
 export default class FirebaseRealtimeDatabase {
   database: Database;
@@ -8,18 +15,46 @@ export default class FirebaseRealtimeDatabase {
     this.database = getDatabase();
   }
 
-  write(data: SignOutUserData) {
-    set(ref(this.database, "users/" + data.uid), {
-      username: data.name,
-      uid: data.uid,
-    });
+  write(data: SignOutUserData | null, message: MessagesStored | null) {
+    const timestamp = Date.now().toString();
+    if (message) {
+      // `messages/${message.from}/${message.to}`
+      // my messages store
+      // push(ref(this.database, `users/${message.from}/messages/${message.to}`), {
+      push(ref(this.database, `messages/${message.from}/${message.to}`), {
+        message: message.message,
+        timestamp,
+        uid: message.from,
+      });
+
+      // `messages/${message.to}/${message.from}`
+      // friend message store
+      // push(ref(this.database, `users/${message.to}/messages/${message.from}`), {
+      push(ref(this.database, `messages/${message.to}/${message.from}`), {
+        message: message.message,
+        timestamp,
+        uid: message.from,
+      });
+
+      return;
+    }
+    if (data)
+      set(ref(this.database, "users/" + data.uid), {
+        username: data.name,
+        uid: data.uid,
+      });
   }
 
-  read() {
-    const reference = ref(this.database, "/users");
-    onValue(reference, (snapshot) => {
+  read<T>(callback: (e: T[]) => void, messageDB: string | null) {
+    const users = `users/`;
+    const messages = `messages/${messageDB}`;
+
+    const reference = ref(this.database, messageDB ? messages : users);
+    const dbData = onValue(reference, (snapshot) => {
       const data = snapshot.val();
-      console.log(data);
+      const res = Object.values(data) as T[];
+      callback(res);
     });
+    return dbData;
   }
 }

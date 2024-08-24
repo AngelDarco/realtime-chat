@@ -8,6 +8,7 @@ export type SignOutUserData = {
 export type UserData = {
   uid: string;
   username: string;
+  image?: string;
   email?: string;
   password?: string;
 };

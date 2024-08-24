@@ -21,7 +21,7 @@ export default class FirebaseSessions {
   }
 
   signup(data: UserData, dispatch: Dispatch) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       createUserWithEmailAndPassword(this.auth, data.email, data.password)
         .then((userCredentials) => {
           const { uid } = userCredentials.user;
@@ -29,21 +29,25 @@ export default class FirebaseSessions {
           resolve(uid);
         })
         .catch((err) => {
-          console.log(err);
-          reject(err);
+          console.error(err);
+          resolve(err.message);
         });
     });
   }
 
   login(data: UserData, dispatch: Dispatch) {
-    signInWithEmailAndPassword(this.auth, data.name, data.password)
-      .then((userCredentials) => {
-        const { uid } = userCredentials.user;
-        dispatch(loginState(uid));
-      })
-      .catch((err) => {
-        console.error(err);
-      });
+    return new Promise((resolve) => {
+      signInWithEmailAndPassword(this.auth, data.name, data.password)
+        .then((userCredentials) => {
+          const { uid } = userCredentials.user;
+          dispatch(loginState(uid));
+          resolve(uid);
+        })
+        .catch((err) => {
+          console.error(err);
+          resolve(err.message);
+        });
+    });
   }
 
   logout(dispatch: Dispatch) {

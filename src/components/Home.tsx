@@ -10,15 +10,25 @@ export default function Home() {
   const [location, navigate] = useLocation();
 
   useEffect(() => {
-    // if (!uid) navigate("/");
-    if (location === "/users") navigate("/users", { replace: true });
+    if (uid && location === "/") navigate("/users");
+    else if (!uid && location !== "/login" && location !== "/signup")
+      navigate("/");
   }, [uid, location]);
 
   return (
-    <div className="w-[300px] h-[350px] border border-white">
+    <div className="App min-w-96 w-full gradient">
       {!uid ? (
-        <div className="w-full h-full flex flex-col items-center justify-center bg-slate-900">
-          <ul className="[&>a]:p-1 [&>a]:border-b-2 [&>a]:m-2  [&>a]:px-5 [&>a]:rounded-lg [&>a:hover]:bg-orange-400">
+        <div className="w-full h-dvh relative">
+          <ul
+            className={`${
+              location !== "/"
+                ? "glass flex absolute [&>a]:text-xs"
+                : "flex-col h-dvh [&>a]:text-sm"
+            }
+            w-full flex items-center justify-center [&>a]:p-1 [&>a]:border-b-[1px] [&>a]:font-bold [&>a]:m-2  [&>a]:px-5 [&>a]:rounded-md 
+            [&>a:hover]:animate-jump [&>a:hover]:animate-once [&>a:hover]:animate-duration-[1000ms]
+            `}
+          >
             <Link href="/login">Login</Link>
             <Link href="/signup">Signout</Link>
             <Link

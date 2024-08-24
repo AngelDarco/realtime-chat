@@ -16,14 +16,14 @@ export default function Home() {
   }, [uid, location]);
 
   return (
-    <div className="App min-w-xs w-[350px] h-full gradient">
+    <div className="App min-w-96 w-full gradient">
       {!uid ? (
-        <div className="w-full h-full relative">
+        <div className="w-full h-dvh relative">
           <ul
             className={`${
               location !== "/"
                 ? "glass flex absolute [&>a]:text-xs"
-                : "flex-col h-full [&>a]:text-sm"
+                : "flex-col h-dvh [&>a]:text-sm"
             }
             w-full flex items-center justify-center [&>a]:p-1 [&>a]:border-b-[1px] [&>a]:font-bold [&>a]:m-2  [&>a]:px-5 [&>a]:rounded-md 
             [&>a:hover]:animate-jump [&>a:hover]:animate-once [&>a:hover]:animate-duration-[1000ms]

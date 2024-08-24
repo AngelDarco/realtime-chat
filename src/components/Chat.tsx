@@ -80,7 +80,7 @@ export default function Home() {
         <div className="w-full h-full flex flex-col">
           <div
             ref={messagesContainerRef}
-            className="w-full h-full p-2 pt-10 flex items-end flex-col overflow-y-scroll  no-scrollbar"
+            className="w-full h-dvh p-2 pt-10 flex items-end flex-col overflow-y-scroll  no-scrollbar"
           >
             {messages &&
               messages.map((item, index) => {
@@ -106,15 +106,15 @@ export default function Home() {
                 );
               })}
           </div>
-          <div className="glass w-full flex">
+          <div className="glass w-[90%] mx-auto flex mb-4">
             <input
               ref={messageRef}
-              className="w-full outline-none text-indigo-700  p-2 bg-inherit border-[1px] hover:bottom-2"
+              className="w-full outline-none p-2 bg-inherit border-none hover:bottom-2"
               type="text"
             />
             <button
               onClick={handlerSendMessages}
-              className="p-1 px-3 border text-orange-600 hover:text-green-600 hover:font-bold"
+              className="p-1 px-3 border-none text-orange-600 hover:text-green-600 hover:font-bold"
             >
               send
             </button>

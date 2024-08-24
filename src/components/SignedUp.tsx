@@ -42,7 +42,7 @@ export default function SignUp() {
       ) : (
         <form
           onSubmit={handlerSignup}
-          className="w-full h-full flex flex-col items-center justify-center 
+          className="w-full h-dvh flex flex-col items-center justify-center 
        [&>label]:w-full [&>label]:pl-10 
       [&>input]:rounded [&>input]:bg-inherit [&>input]:border-b-2 [&>input]:p-1 [&>input]:mb-4"
         >

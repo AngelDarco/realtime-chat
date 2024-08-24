@@ -59,7 +59,7 @@ export default function Users() {
       {!uid ? (
         <></>
       ) : (
-        <div className="w-full h-full pt-12 relative flex flex-col">
+        <div className="w-full h-dvh pt-12 relative flex flex-col">
           <ul
             className="glass absolute top-0 flex w-full px-4 py-2 border-b gap-2 border-none
           [&>a]:border-b-2 [&>a]:rounded-2xl hover:[&>a]:rounded-2xl
@@ -89,7 +89,7 @@ export default function Users() {
               </div>
               <div
                 className={`${location !== "/users" ? "hidden" : "flex"} 
-            w-full h-full flex-col justify-center items-center p-3 overflow-y-scroll no-scrollbar `}
+            w-full h-dvh flex-col justify-center items-center p-3 overflow-y-scroll no-scrollbar `}
               >
                 {usersData &&
                   usersData.map((item, index) => {

@@ -6,6 +6,8 @@ import FirebaseRealtimeDatabase from "../utils/FirebaseRealtimeDatabase";
 import { SignOutUserData } from "../types";
 import { BounceLoader } from "react-spinners";
 import { useLocation } from "wouter";
+import { Bounce, toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function SignUp() {
   const dispatch = useDispatch();
@@ -24,15 +26,33 @@ export default function SignUp() {
       }
     });
     const response = await sessions.signup(userData, dispatch);
+    let id: Timer;
     if (typeof response === "string") {
-      userData["uid"] = response;
-      users.write(userData as SignOutUserData, null);
-      setLoader(false);
-      navigate("/users");
+      if (response.includes("Firebase")) {
+        toast.error(response, {
+          position: "top-center",
+          autoClose: 1500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
+        id = setTimeout(() => setLoader(false), 3000);
+      } else {
+        userData["uid"] = response;
+        users.write(userData as SignOutUserData, null);
+        setLoader(false);
+        navigate("/users");
+      }
     }
+    return () => clearTimeout(id);
   };
   return (
     <>
+      <ToastContainer />
       {loader ? (
         <BounceLoader
           color="#fff"
@@ -47,16 +67,17 @@ export default function SignUp() {
       [&>input]:rounded [&>input]:bg-inherit [&>input]:border-b-2 [&>input]:p-1 [&>input]:mb-4"
         >
           <label htmlFor="name">name:</label>
-          <input name="name" type="text" />
+          <input name="name" type="text" required />
           <label htmlFor="email">email:</label>
-          <input name="email" type="text" />
+          <input name="email" type="text" required />
           <label htmlFor="password">password:</label>
-          <input name="password" type="password" />
+          <input name="password" type="password" required />
           <button
             className="
       py-1 px-5 mt-3 border rounded-lg
       hover:font-bold
       hover:animate-wiggle hover:animate-once hover:animate-duration-[1000ms]"
+            disabled={loader ? true : false}
           >
             signup
           </button>

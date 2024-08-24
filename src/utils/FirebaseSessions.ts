@@ -36,14 +36,18 @@ export default class FirebaseSessions {
   }
 
   login(data: UserData, dispatch: Dispatch) {
-    signInWithEmailAndPassword(this.auth, data.name, data.password)
-      .then((userCredentials) => {
-        const { uid } = userCredentials.user;
-        dispatch(loginState(uid));
-      })
-      .catch((err) => {
-        console.error(err);
-      });
+    return new Promise((resolve, reject) => {
+      signInWithEmailAndPassword(this.auth, data.name, data.password)
+        .then((userCredentials) => {
+          const { uid } = userCredentials.user;
+          dispatch(loginState(uid));
+          resolve(uid);
+        })
+        .catch((err) => {
+          console.error(err);
+          reject(err);
+        });
+    });
   }
 
   logout(dispatch: Dispatch) {
